@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Library</title>
+  <style>
+    body {
+      background-color: #C71585;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    
+    .book-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    
+    .book {
+      background-color: #850A5C;
+      width: 250px;
+      text-align: center;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .book img {
+      width: 150px;
+      height: 150px;
+      border-radius: 5px;
+      display: block;
+      margin: 0 auto 10px;
+      object-fit: cover;
+    }
+    
+    .status {
+      font-weight: bold;
+      color: green;
+    }
+    
+    .status.unavailable {
+      color: red;
+    }
+    
+    .button-container {
+      margin-top: 10px;
+    }
+    
+    .button-container button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    
+    .button-container button:hover {
+      background-color: #FF00FF;
+    }
+  </style>
+</head>
+<body>
+  <h1>The Spot Library</h1>
+  <div class="book-container" id="book-container"></div>
+
+  <script>
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbxmykw3GxZ0qIcWSWvFNZGVMaIbmMxyYrbSrxvDnikmaPT7QDqkJNTYf_QzgiBfXYm_7Q/exec';
+
+    async function fetchBooks() {
+      try {
+        // Use cached data to avoid redundant API calls
+        let books = JSON.parse(localStorage.getItem('books'));
+        
+        if (!books) {
+          const response = await fetch(apiUrl, { method: 'GET' });
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          books = await response.json();
+          localStorage.setItem('books', JSON.stringify(books)); // Cache response
+        }
+
+        console.log("Fetched books:", books);
+        renderBooks(books);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    function renderBooks(books) {
+      const bookContainer = document.getElementById('book-container');
+      bookContainer.innerHTML = '';
+
+      books.forEach(book => {
+        const bookDiv = document.createElement('div');
+        bookDiv.className = 'book';
+
+        const imgSrc = book.imageUrl || 'https://via.placeholder.com/150x150?text=No+Image';
+
+        bookDiv.innerHTML = `
+          <img src="${imgSrc}" onerror="this.src='https://via.placeholder.com/150x150?text=No+Image'" alt="${book.title}">
+          <h3>${book.title}</h3>
+          <p>Author: ${book.author || "Unknown"}</p>
+          <p>ID: ${book.id || "N/A"}</p>
+          <p class="status ${book.availability === 'Available' ? '' : 'unavailable'}">${book.availability}</p>
+          <div class="button-container">
+            <button data-link="${book.link || '#'}">Book</button>
+          </div>
+        `;
+
+        bookContainer.appendChild(bookDiv);
+      });
+
+      // Attach event listener to all buttons
+      document.querySelectorAll('.button-container button').forEach(button => {
+        button.addEventListener('click', (event) => {
+          window.open(event.target.dataset.link, '_blank');
+        });
+      });
+    }
+
+    fetchBooks();
+  </script>
+</body>
+</html>
