@@ -20,7 +20,7 @@
       gap: 20px;
     }
     .book {
-      background-color: #000000;
+      background-color: #850A5C;
       width: 250px;
       text-align: center;
       border: 1px solid #ddd;
@@ -106,7 +106,7 @@
             <h3>${book.title}</h3>
             <p>Author: ${book.author || "Unknown"}</p>
             <p>ID: ${book.id || "N/A"}</p>
-            <p class="status ${book.availability === 'Available' ? '' : 'unavailable'}">${book.availability}</p>
+            <p class="status ${book.availability === 'Available' ? '' : 'unavailable'}">rented by ${book.availability}</p>
             <div class="button-container">
               <button onclick="window.open('${book.link || '#'}', '_blank')">Book</button>
             </div>
