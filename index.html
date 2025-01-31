@@ -91,7 +91,9 @@
         books.forEach(book => {
           const bookDiv = document.createElement('div');
           bookDiv.className = 'book';
+          const availability = book.availability === '#N/A' ? <p>free<p> : book.availability;
 
+        
           // Use SVG to display the image
           const svg = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
