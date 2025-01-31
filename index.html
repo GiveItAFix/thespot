@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Book Library</title>
   <style>
+
     body {
-      background-color: #C71585;
+      background-color: #C71585; 
       color: white;
       font-family: Arial, sans-serif;
       text-align: center;
@@ -15,12 +16,11 @@
     .book-container {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: center; /* Center the book boxes */
       gap: 20px;
     }
-    
     .book {
-      background-color: #850A5C;
+      background-color: #000000;
       width: 250px;
       text-align: center;
       border: 1px solid #ddd;
@@ -28,29 +28,23 @@
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
-    
-    .book img {
+    svg {
       width: 150px;
       height: 150px;
       border-radius: 5px;
       display: block;
       margin: 0 auto 10px;
-      object-fit: cover;
     }
-    
     .status {
       font-weight: bold;
       color: green;
     }
-    
     .status.unavailable {
       color: red;
     }
-    
     .button-container {
       margin-top: 10px;
     }
-    
     .button-container button {
       background-color: #007BFF;
       color: white;
@@ -60,7 +54,6 @@
       cursor: pointer;
       text-decoration: none;
     }
-    
     .button-container button:hover {
       background-color: #FF00FF;
     }
@@ -68,60 +61,60 @@
 </head>
 <body>
   <h1>The Spot Library</h1>
-  <div class="book-container" id="book-container"></div>
+  <div class="book-container" id="book-container">
+    <!-- Books will be dynamically loaded here -->
+  </div>
 
   <script>
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbxyvrNBreW0rOTvRp0ie1ODqkT-r86ZKV_EmZPrkuvDmqY2ByPqzsNYzg5PhN1gmj3V1w/exec';
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbxyvrNBreW0rOTvRp0ie1ODqkT-r86ZKV_EmZPrkuvDmqY2ByPqzsNYzg5PhN1gmj3V1w/exec'; // Replace with your Web App URL
 
     async function fetchBooks() {
       try {
-        // Use cached data to avoid redundant API calls
-        let books = JSON.parse(localStorage.getItem('books'));
-        
-        if (!books) {
-          const response = await fetch(apiUrl, { method: 'GET' });
-          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-          books = await response.json();
-          localStorage.setItem('books', JSON.stringify(books)); // Cache response
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        console.log("Fetched books:", books);
-        renderBooks(books);
+        const books = await response.json();
+        console.log("Fetched books from API:", books);
+
+        const bookContainer = document.getElementById('book-container');
+        bookContainer.innerHTML = '';
+
+        books.forEach(book => {
+          const bookDiv = document.createElement('div');
+          bookDiv.className = 'book';
+
+          // Use SVG to display the image
+          const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
+              <rect width="150" height="150" fill="#ccc"></rect>
+              <image href="${book.imageUrl}" width="150" height="150" onerror="this.setAttribute('href', 'https://via.placeholder.com/200x300?text=No+Image')"></image>
+            </svg>
+          `;
+
+          // Create book content
+          bookDiv.innerHTML = `
+            ${svg}
+            <h3>${book.title}</h3>
+            <p>Author: ${book.author || "Unknown"}</p>
+            <p>ID: ${book.id || "N/A"}</p>
+            <p class="status ${book.availability === 'Available' ? '' : 'unavailable'}">${book.availability}</p>
+            <div class="button-container">
+              <button onclick="window.open('${book.link || '#'}', '_blank')">Book</button>
+            </div>
+          `;
+          bookContainer.appendChild(bookDiv);
+        });
       } catch (error) {
         console.error('Error fetching data:', error);
       }
-    }
-
-    function renderBooks(books) {
-      const bookContainer = document.getElementById('book-container');
-      bookContainer.innerHTML = '';
-
-      books.forEach(book => {
-        const bookDiv = document.createElement('div');
-        bookDiv.className = 'book';
-
-        const imgSrc = book.imageUrl || 'https://via.placeholder.com/150x150?text=No+Image';
-
-        bookDiv.innerHTML = `
-          <img src="${imgSrc}" onerror="this.src='https://via.placeholder.com/150x150?text=No+Image'" alt="${book.title}">
-          <h3>${book.title}</h3>
-          <p>Author: ${book.author || "Unknown"}</p>
-          <p>ID: ${book.id || "N/A"}</p>
-          <p class="status ${book.availability === 'Available' ? '' : 'unavailable'}">${book.availability}</p>
-          <div class="button-container">
-            <button data-link="${book.link || '#'}">Book</button>
-          </div>
-        `;
-
-        bookContainer.appendChild(bookDiv);
-      });
-
-      // Attach event listener to all buttons
-      document.querySelectorAll('.button-container button').forEach(button => {
-        button.addEventListener('click', (event) => {
-          window.open(event.target.dataset.link, '_blank');
-        });
-      });
     }
 
     fetchBooks();
