@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Book Library</title>
   <style>
-
     body {
       background-color: #C71585; 
       color: white;
@@ -42,6 +41,9 @@
     .status.unavailable {
       color: red;
     }
+    .status.free {
+      color: green;
+    }
     .button-container {
       margin-top: 10px;
     }
@@ -67,7 +69,7 @@
   </div>
 
   <script>
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbxyvrNBreW0rOTvRp0ie1ODqkT-r86ZKV_EmZPrkuvDmqY2ByPqzsNYzg5PhN1gmj3V1w/exec'; // Replace with your Web App URL
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbxyvrNBreW0rOTvRp0ie1ODqkT-r86ZKV_EmZPrkuvDmqY2ByPqzsNYzg5PhN1gmj3V1w/exec';
 
     async function fetchBooks() {
       try {
@@ -83,6 +85,8 @@
         }
 
         const books = await response.json();
+        if (!Array.isArray(books)) throw new Error("Invalid response format");
+
         console.log("Fetched books from API:", books);
 
         const bookContainer = document.getElementById('book-container');
@@ -91,10 +95,9 @@
         books.forEach(book => {
           const bookDiv = document.createElement('div');
           bookDiv.className = 'book';
-          const availability = book.availability === '#N/A' ? <p>free<p> : book.availability;
+          const availability = book.availability === '#N/A' ? 'free' : book.availability;
+          const statusClass = availability === 'free' ? 'status free' : (availability === 'Available' ? 'status' : 'status unavailable');
 
-        
-          // Use SVG to display the image
           const svg = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
               <rect width="150" height="150" fill="#ccc"></rect>
@@ -102,13 +105,12 @@
             </svg>
           `;
 
-          // Create book content
           bookDiv.innerHTML = `
             ${svg}
             <h3>${book.title}</h3>
             <p>Author: ${book.author || "Unknown"}</p>
             <p>ID: ${book.id || "N/A"}</p>
-            <p class="status ${book.availability === 'Available' ? '' : 'unavailable'}">rented by ${book.availability}</p>
+            <p class="${statusClass}">${availability}</p>
             <div class="button-container">
               <button onclick="window.open('${book.link || '#'}', '_blank')">Book</button>
             </div>
@@ -117,10 +119,12 @@
         });
       } catch (error) {
         console.error('Error fetching data:', error);
+        document.getElementById('book-container').innerHTML = '<p>Failed to load books. Please try again later.</p>';
       }
     }
 
     fetchBooks();
+    setInterval(fetchBooks, 300000); // Refresh every 5 minutes
   </script>
 </body>
 </html>
