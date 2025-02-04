@@ -53,6 +53,13 @@
       display: block;
       margin: 0 auto 10px;
     }
+    .status {
+      font-weight: bold;
+      color: green;
+    }
+    .status.unavailable {
+      color: red;
+    }
   </style>
 </head>
 <body>
@@ -87,10 +94,12 @@
         books.forEach(book => {
           const bookDiv = document.createElement('div');
           bookDiv.className = 'book';
+          const statusClass = book.availability === 'free' ? 'status' : 'status unavailable';
           bookDiv.innerHTML = `
             <img src="${book.imageUrl || 'https://via.placeholder.com/150'}" alt="Book Cover">
             <h3>${book.title}</h3>
             <p>Author: ${book.author}</p>
+            <p class="${statusClass}">${book.availability}</p>
           `;
           bookContainer.appendChild(bookDiv);
         });
@@ -100,7 +109,7 @@
     }
     fetchBooks();
 
-    const gamesApiUrl = 'https://script.google.com/macros/s/AKfycbyLVseM_fEcQNsgJ9PO3_sSr7KXRFy5qtMh0q3qNARjCgCsUhJE6NysUNoIciEgSgGu-A/exec'; // Replace with your API
+    const gamesApiUrl = 'https://your-games-api-endpoint.com'; // Replace with your API
     async function fetchGames() {
       try {
         const response = await fetch(gamesApiUrl);
