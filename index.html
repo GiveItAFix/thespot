@@ -97,7 +97,7 @@
       document.getElementById(pageId).classList.add('active');
     }
 
-    const booksApiUrl = 'https://script.google.com/macros/s/AKfycbyvRXwRmyqLAykd5Bpza9_-z9f95OFz8dsoKNE5ftA4TOm1zt0wabsZTNRYV9qHSDxrZQ/exec?type=Knihy';
+    const booksApiUrl = 'https://script.google.com/macros/s/AKfycbyvRXwRmyqLAykd5Bpza9_-z9f95OFz8dsoKNE5ftA4TOm1zt0wabsZTNRYV9qHSDxrZQ/exec?type=knihy';
     async function fetchBooks() {
       try {
         const response = await fetch(booksApiUrl);
@@ -129,7 +129,7 @@
     }
     fetchBooks();
 
-    const gamesApiUrl = 'https://script.google.com/macros/s/AKfycbyvRXwRmyqLAykd5Bpza9_-z9f95OFz8dsoKNE5ftA4TOm1zt0wabsZTNRYV9qHSDxrZQ/exec?type=Hry';
+    const gamesApiUrl = 'https://script.google.com/macros/s/AKfycbyvRXwRmyqLAykd5Bpza9_-z9f95OFz8dsoKNE5ftA4TOm1zt0wabsZTNRYV9qHSDxrZQ/exec?type=hry';
     async function fetchGames() {
       try {
         const response = await fetch(gamesApiUrl);
