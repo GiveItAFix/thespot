@@ -100,32 +100,14 @@
     const booksApiUrl = 'https://script.google.com/macros/s/AKfycbwkXwfwIk4fbeWxkwVBAgO6u99XLSmwiX-w-bCl5V77zGctwna7P7_hkzKmHHo-T4sbAg/exec';
     async function fetchBooks() {
       try {
-
- const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        const response = await fetch(booksApiUrl);
         const books = await response.json();
-        if (!Array.isArray(books)) throw new Error("Invalid response format");
-
-        console.log("Fetched books from API:", books);
-
         const bookContainer = document.getElementById('book-container');
         bookContainer.innerHTML = '';
-
         books.forEach(book => {
-          const bookDiv = document.createElement('div');
-          bookDiv.className = 'book';
           const availability = book.availability === '#N/A' ? 'free' : book.availability;
-          const statusClass = availability === 'free' ? 'status free' : (availability === 'Available' ? 'status' : 'status unavailable');
-
+          const statusClass = availability === 'free' ? 'status' : 'status unavailable';
+         
         
          const bookDiv = document.createElement('div');
           bookDiv.className = 'item';
