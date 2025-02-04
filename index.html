@@ -3,128 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Book Library</title>
+  <title>Library</title>
   <style>
     body {
-      background-color: #C71585; 
+      background-color: #C71585;
       color: white;
       font-family: Arial, sans-serif;
       text-align: center;
     }
-    
-    .book-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center; /* Center the book boxes */
-      gap: 20px;
+    .nav-buttons {
+      margin: 20px;
     }
-    .book {
-      background-color: #850A5C;
-      width: 250px;
-      text-align: center;
-      border: 1px solid #ddd;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    svg {
-      width: 150px;
-      height: 150px;
-      border-radius: 5px;
-      display: block;
-      margin: 0 auto 10px;
-    }
-    .status {
-      font-weight: bold;
-      color: green;
-    }
-    .status.unavailable {
-      color: red;
-    }
-    .status.free {
-      color: green;
-    }
-    .button-container {
-      margin-top: 10px;
-    }
-    .button-container button {
+    .nav-buttons button {
       background-color: #007BFF;
       color: white;
       border: none;
       padding: 10px 20px;
       border-radius: 5px;
       cursor: pointer;
-      text-decoration: none;
+      margin: 5px;
     }
-    .button-container button:hover {
+    .nav-buttons button:hover {
       background-color: #FF00FF;
+    }
+    .page {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .book-container, .game-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    .book, .game {
+      background-color: #850A5C;
+      width: 250px;
+      text-align: center;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .book img, .game img {
+      width: 150px;
+      height: 150px;
+      border-radius: 5px;
+      display: block;
+      margin: 0 auto 10px;
     }
   </style>
 </head>
 <body>
-  <h1>The Spot Library</h1>
-  <h2>info, pozor pozor!!!</h2>
-  <div class="book-container" id="book-container">
-    <!-- Books will be dynamically loaded here -->
+  <div class="nav-buttons">
+    <button onclick="showPage('books')">Books</button>
+    <button onclick="showPage('games')">Games</button>
+  </div>
+
+  <div id="books" class="page active">
+    <h1>The Spot Library - Books</h1>
+    <div class="book-container" id="book-container"></div>
+  </div>
+
+  <div id="games" class="page">
+    <h1>The Spot Library - Games</h1>
+    <div class="game-container" id="game-container"></div>
   </div>
 
   <script>
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbxyvrNBreW0rOTvRp0ie1ODqkT-r86ZKV_EmZPrkuvDmqY2ByPqzsNYzg5PhN1gmj3V1w/exec';
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+    }
 
+    const booksApiUrl = 'https://script.google.com/macros/s/AKfycbxyvrNBreW0rOTvRp0ie1ODqkT-r86ZKV_EmZPrkuvDmqY2ByPqzsNYzg5PhN1gmj3V1w/exec';
     async function fetchBooks() {
       try {
-        const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        const response = await fetch(booksApiUrl);
         const books = await response.json();
-        if (!Array.isArray(books)) throw new Error("Invalid response format");
-
-        console.log("Fetched books from API:", books);
-
         const bookContainer = document.getElementById('book-container');
         bookContainer.innerHTML = '';
-
         books.forEach(book => {
           const bookDiv = document.createElement('div');
           bookDiv.className = 'book';
-          const availability = book.availability === '#N/A' ? 'free' : book.availability;
-          const statusClass = availability === 'free' ? 'status free' : (availability === 'Available' ? 'status' : 'status unavailable');
-
-          const svg = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
-              <rect width="150" height="150" fill="#ccc"></rect>
-              <image href="${book.imageUrl}" width="150" height="150" onerror="this.setAttribute('href', 'https://via.placeholder.com/200x300?text=No+Image')"></image>
-            </svg>
-          `;
-
           bookDiv.innerHTML = `
-            ${svg}
+            <img src="${book.imageUrl || 'https://via.placeholder.com/150'}" alt="Book Cover">
             <h3>${book.title}</h3>
-            <p>Author: ${book.author || "Unknown"}</p>
-            <p>ID: ${book.id || "N/A"}</p>
-            <p class="${statusClass}">${availability}</p>
-            <div class="button-container">
-              <button onclick="window.open('${book.link || '#'}', '_blank')">Book</button>
-            </div>
+            <p>Author: ${book.author}</p>
           `;
           bookContainer.appendChild(bookDiv);
         });
       } catch (error) {
-        console.error('Error fetching data:', error);
-        document.getElementById('book-container').innerHTML = '<p>Failed to load books. Please try again later.</p>';
+        console.error('Error fetching books:', error);
       }
     }
-
     fetchBooks();
-    setInterval(fetchBooks, 300000); // Refresh every 5 minutes
+
+    const gamesApiUrl = 'https://script.google.com/macros/s/AKfycbyLVseM_fEcQNsgJ9PO3_sSr7KXRFy5qtMh0q3qNARjCgCsUhJE6NysUNoIciEgSgGu-A/exec'; // Replace with your API
+    async function fetchGames() {
+      try {
+        const response = await fetch(gamesApiUrl);
+        const games = await response.json();
+        const gameContainer = document.getElementById('game-container');
+        gameContainer.innerHTML = '';
+        games.forEach(game => {
+          const gameDiv = document.createElement('div');
+          gameDiv.className = 'game';
+          gameDiv.innerHTML = `
+            <img src="${game.imageUrl || 'https://via.placeholder.com/150'}" alt="Game Cover">
+            <h3>${game.title}</h3>
+            <p>Developer: ${game.developer}</p>
+          `;
+          gameContainer.appendChild(gameDiv);
+        });
+      } catch (error) {
+        console.error('Error fetching games:', error);
+      }
+    }
+    fetchGames();
   </script>
 </body>
 </html>
