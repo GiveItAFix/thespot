@@ -117,8 +117,8 @@
             <p>Author: ${book.author}</p>
             <p class="${statusClass}">${availability}</p>
             <div class="button-container">
-              <button onclick="window.open('${book.rentLink || '#'}', '_blank')">Rent</button>
-              <button class="return" onclick="window.open('${book.returnLink || '#'}', '_blank')">Return</button>
+              <button onclick="window.open('${book.rentLink || '#'}', 'https://docs.google.com/forms/d/e/1FAIpQLSe6yPH7fpv5B2sIkwKJIa5kSGy7nM6KdPr7qFmHy3SFpgHuAA/viewform?usp=header')">Rent</button>
+              <button class="return" onclick="window.open('${book.returnLink || '#'}', 'https://docs.google.com/forms/d/e/1FAIpQLSe6yPH7fpv5B2sIkwKJIa5kSGy7nM6KdPr7qFmHy3SFpgHuAA/viewform?usp=header')">Return</button>
             </div>
           `;
           bookContainer.appendChild(bookDiv);
