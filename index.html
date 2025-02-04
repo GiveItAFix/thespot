@@ -32,13 +32,13 @@
     .active {
       display: block;
     }
-    .book-container, .game-container {
+    .container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 20px;
     }
-    .book, .game {
+    .item {
       background-color: #850A5C;
       width: 250px;
       text-align: center;
@@ -46,7 +46,7 @@
       padding: 10px;
       border-radius: 5px;
     }
-    .book img, .game img {
+    .item img {
       width: 150px;
       height: 150px;
       border-radius: 5px;
@@ -75,6 +75,7 @@
   </style>
 </head>
 <body>
+
   <div class="nav-buttons">
     <button onclick="showPage('books')">Books</button>
     <button onclick="showPage('games')">Games</button>
@@ -82,12 +83,12 @@
 
   <div id="books" class="page active">
     <h1>The Spot Library - Books</h1>
-    <div class="book-container" id="book-container"></div>
+    <div class="container" id="book-container"></div>
   </div>
 
   <div id="games" class="page">
     <h1>The Spot Library - Games</h1>
-    <div class="game-container" id="game-container"></div>
+    <div class="container" id="game-container"></div>
   </div>
 
   <script>
@@ -96,7 +97,7 @@
       document.getElementById(pageId).classList.add('active');
     }
 
-    const booksApiUrl = 'https://script.google.com/macros/s/AKfycbxyvrNBreW0rOTvRp0ie1ODqkT-r86ZKV_EmZPrkuvDmqY2ByPqzsNYzg5PhN1gmj3V1w/exec';
+    const booksApiUrl = 'https://script.google.com/macros/s/AKfycbwkXwfwIk4fbeWxkwVBAgO6u99XLSmwiX-w-bCl5V77zGctwna7P7_hkzKmHHo-T4sbAg/exec';
     async function fetchBooks() {
       try {
         const response = await fetch(booksApiUrl);
@@ -107,7 +108,7 @@
           const availability = book.availability === '#N/A' ? 'free' : book.availability;
           const statusClass = availability === 'free' ? 'status' : 'status unavailable';
           const bookDiv = document.createElement('div');
-          bookDiv.className = 'book';
+          bookDiv.className = 'item';
           bookDiv.innerHTML = `
             <img src="${book.imageUrl || 'https://via.placeholder.com/150'}" alt="Book Cover">
             <h3>${book.title}</h3>
@@ -125,6 +126,38 @@
       }
     }
     fetchBooks();
+
+    const gamesApiUrl = 'https://script.google.com/macros/s/AKfycbyLVseM_fEcQNsgJ9PO3_sSr7KXRFy5qtMh0q3qNARjCgCsUhJE6NysUNoIciEgSgGu-A/exec';
+    async function fetchGames() {
+      try {
+        const response = await fetch(gamesApiUrl);
+        const games = await response.json();
+        const gameContainer = document.getElementById('game-container');
+        gameContainer.innerHTML = '';
+        games.forEach(game => {
+          const availability = game.availability === '#N/A' ? 'free' : game.availability;
+          const statusClass = availability === 'free' ? 'status' : 'status unavailable';
+          const gameDiv = document.createElement('div');
+          gameDiv.className = 'item';
+          gameDiv.innerHTML = `
+            <img src="${game.imageUrl || 'https://via.placeholder.com/150'}" alt="Game Cover">
+            <h3>${game.title}</h3>
+            <p>Developer: ${game.developer}</p>
+            <p class="${statusClass}">${availability}</p>
+            <div class="button-container">
+              <button onclick="window.open('${game.rentLink || '#'}', '_blank')">Rent</button>
+              <button class="return" onclick="window.open('${game.returnLink || '#'}', '_blank')">Return</button>
+            </div>
+          `;
+          gameContainer.appendChild(gameDiv);
+        });
+      } catch (error) {
+        console.error('Error fetching games:', error);
+      }
+    }
+    fetchGames();
   </script>
+
 </body>
 </html>
+
