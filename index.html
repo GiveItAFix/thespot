@@ -113,7 +113,7 @@
             <img src="${book.imageUrl || 'https://via.placeholder.com/150'}" alt="Book Cover">
             <h3>${book.title}</h3>
             <p>Author: ${book.author}</p>
-            <p>Author: ${book.id}</p>
+            <p>ID: ${book.id}</p>
             <p class="${statusClass}">${availability}</p>
             <div class="button-container">
            <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSe6yPH7fpv5B2sIkwKJIa5kSGy7nM6KdPr7qFmHy3SFpgHuAA/viewform?usp=header', '_blank')">Rent</button>
@@ -143,7 +143,7 @@
           gameDiv.innerHTML = `
             <img src="${game.imageUrl || 'https://via.placeholder.com/150'}" alt="Game Cover">
             <h3>${game.title}</h3>
-            <p>Developer: ${game.developer}</p>
+            <p>ID: ${game.id}</p>
             <p class="${statusClass}">${availability}</p>
             <div class="button-container">
            <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSe6yPH7fpv5B2sIkwKJIa5kSGy7nM6KdPr7qFmHy3SFpgHuAA/viewform?usp=header', '_blank')">Rent</button>
